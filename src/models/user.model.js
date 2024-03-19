@@ -8,15 +8,15 @@ const config = require('../config')
 const Schema = mongoose.Schema
 
 const roles = [
-  'user', 'admin'
+  'superAdmin', 'admin'
 ]
 
 const userSchema = new Schema({
-  email: {
+  userName: {
     type: String,
     required: true,
     unique: true,
-    lowercase: true
+    maxlength: 50
   },
   password: {
     type: String,
@@ -24,22 +24,25 @@ const userSchema = new Schema({
     minlength: 4,
     maxlength: 128
   },
-  name: {
+  email: {
     type: String,
-    maxlength: 50
+    unique: true,
+    lowercase: true
   },
-  activationKey: {
+  parentId: {
     type: String,
-    unique: true
   },
   active: {
     type: Boolean,
-    default: false
+    default: true
   },
   role: {
     type: String,
     default: 'user',
     enum: roles
+  },
+  meta: {
+    type: Object
   }
 }, {
   timestamps: true
@@ -85,7 +88,7 @@ userSchema.post('save', async function saved (doc, next) {
 userSchema.method({
   transform () {
     const transformed = {}
-    const fields = ['id', 'name', 'email', 'createdAt', 'role']
+    const fields = ['id', 'userName', 'email', 'createdAt', 'role']
 
     fields.forEach((field) => {
       transformed[field] = this[field]
@@ -104,12 +107,22 @@ userSchema.statics = {
 
   checkDuplicateEmailError (err) {
     if (err.code === 11000) {
-      var error = new Error('Email already taken')
-      error.errors = [{
-        field: 'email',
-        location: 'body',
-        messages: ['Email already taken']
-      }]
+      if(err?.keyValue?.email){
+        var error = new Error('Email already taken')
+        error.errors = [{
+          field: 'email',
+          location: 'body',
+          messages: ['Email already taken']
+        }]
+      } else {
+        var error = new Error('Username already taken')
+        error.errors = [{
+          field: 'userName',
+          location: 'body',
+          messages: ['Username already taken']
+        }]
+      }
+      
       error.status = httpStatus.CONFLICT
       return error
     }
@@ -118,11 +131,11 @@ userSchema.statics = {
   },
 
   async findAndGenerateToken (payload) {
-    const { email, password } = payload
-    if (!email) throw new APIError('Email must be provided for login')
+    const { userName, password } = payload
+    if (!userName) throw new APIError('Email must be provided for login')
 
-    const user = await this.findOne({ email }).exec()
-    if (!user) throw new APIError(`No user associated with ${email}`, httpStatus.NOT_FOUND)
+    const user = await this.findOne({ userName }).exec()
+    if (!user) throw new APIError(`Invalid Username`, httpStatus.NOT_FOUND)
 
     const passwordOK = await user.passwordMatches(password)
 
