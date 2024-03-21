@@ -10,6 +10,10 @@ const auth = require('../../middlewares/authorization')
 // router.post('/register', validator(create), authController.register) // validate and register
 
 router.post('/create', auth(['superAdmin']), userController.create)
+router.get('/getUser/:id', userController.getUser)
+router.get('/getUsers/:parentId', auth(['superAdmin']), userController.getUsers)
+router.delete('/delete/:id', auth(['superAdmin']), userController.delete)
+router.put('/update/:id', auth(['superAdmin', 'admin']), userController.update)
 
 
 module.exports = router

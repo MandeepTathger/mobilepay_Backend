@@ -30,7 +30,7 @@ const userSchema = new Schema({
     lowercase: true
   },
   parentId: {
-    type: String,
+    type: mongoose.Types.ObjectId,
   },
   active: {
     type: Boolean,
