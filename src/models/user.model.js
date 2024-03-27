@@ -18,6 +18,10 @@ const userSchema = new Schema({
     unique: true,
     maxlength: 50
   },
+  name: {
+    type: String,
+    maxlength: 50
+  },
   password: {
     type: String,
     required: true,
@@ -26,7 +30,6 @@ const userSchema = new Schema({
   },
   email: {
     type: String,
-    unique: true,
     lowercase: true
   },
   parentId: {
@@ -38,7 +41,6 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    default: 'user',
     enum: roles
   },
   meta: {
@@ -56,6 +58,13 @@ userSchema.pre('save', async function save (next) {
 
     this.password = bcrypt.hashSync(this.password)
 
+    if (this.email) {
+      const existingUser = await this.constructor.findOne({ email: this.email });
+      if (existingUser && !existingUser._id.equals(this._id)) {
+        const error = new Error('Email already exists');
+        return next(error);
+      }
+    }
     return next()
   } catch (error) {
     return next(error)
