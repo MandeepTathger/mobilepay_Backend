@@ -8,9 +8,9 @@ const uuidv1 = require('uuid/v1')
 
 exports.register = async (req, res, next) => {
   try {
-    const activationKey = uuidv1()
+    // const activationKey = uuidv1()
     const body = req.body
-    body.activationKey = activationKey
+    // body.activationKey = activationKey
     const user = new User(body)
     const savedUser = await user.save()
     res.status(httpStatus.CREATED)
@@ -25,7 +25,15 @@ exports.login = async (req, res, next) => {
     const user = await User.findAndGenerateToken(req.body)
     const payload = {sub: user.id}
     const token = jwt.sign(payload, config.secret)
-    return res.json({ message: 'OK', token: token })
+    return res.json({ 
+      message: 'OK', 
+      token: token, 
+      role: user.role, 
+      id: user._id, 
+      email: user.email, 
+      userName: user.userName,
+      name: user.name
+    })
   } catch (error) {
     next(error)
   }

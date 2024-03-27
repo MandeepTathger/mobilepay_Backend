@@ -132,7 +132,7 @@ userSchema.statics = {
 
   async findAndGenerateToken (payload) {
     const { userName, password } = payload
-    if (!userName) throw new APIError('Email must be provided for login')
+    if (!userName) throw new APIError('Username must be provided for login')
 
     const user = await this.findOne({ userName }).exec()
     if (!user) throw new APIError(`Invalid Username`, httpStatus.NOT_FOUND)

@@ -7,6 +7,7 @@ const httpStatus = require('http-status')
 const uuidv1 = require('uuid/v1')
 const mongoose = require('mongoose');
 const { default: userRole } = require('../utils/user.enum')
+const bcrypt = require('bcrypt-nodejs')
 
 exports.create = async (req, res, next) => {
   try {
@@ -51,6 +52,10 @@ exports.delete = async (req, res, next) => {
 
 exports.update = async (req, res, next) => {
   try {
+    const data = req.body
+    if(data.password){
+      data.password = bcrypt.hashSync(data.password)
+    }
     const user = await User.findByIdAndUpdate(req.params.id, req.body, {
       new: true
     })
@@ -63,3 +68,5 @@ exports.update = async (req, res, next) => {
     return next(User.checkDuplicateEmailError(error))
   }
 }
+
+
