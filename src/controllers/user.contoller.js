@@ -62,7 +62,8 @@ exports.update = async (req, res, next) => {
     res.json({
       id: user._id,
       userName: user.userName,
-      email: user.email
+      email: user.email,
+      name: user.name
     })
   } catch (error) {
     return next(User.checkDuplicateEmailError(error))
