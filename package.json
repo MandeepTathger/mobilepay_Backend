@@ -26,6 +26,7 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
@@ -44,6 +45,8 @@
     "nodemailer": "^6.2.1",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
+    "razorpay": "^2.9.2",
+    "request": "^2.88.2",
     "uuid": "^3.3.2"
   }
 }
