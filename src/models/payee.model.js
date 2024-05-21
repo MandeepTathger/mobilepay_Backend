@@ -19,6 +19,12 @@ const payeeSchema = new Schema({
   parentId: {
     type: mongoose.Types.ObjectId, 
     require: true
+  },
+  contactId: {
+    type: String
+  },
+  fundAccountId: {
+    type: String
   }
 }, {
   timestamps: true

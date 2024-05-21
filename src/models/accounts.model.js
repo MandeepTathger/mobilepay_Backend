@@ -17,8 +17,7 @@ const accountSchema = new Schema({
     require: true
   },
   bankName: {
-    type: String,
-    require: true
+    type: String
   },
   IFSCCode: {
     type: String,
@@ -34,6 +33,12 @@ const accountSchema = new Schema({
   role: {
     type: String,
     enum: roles
+  },
+  contactId: {
+    type: String
+  },
+  fundAccountId: {
+    type: String
   }
 }, {
   timestamps: true
