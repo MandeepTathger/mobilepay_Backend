@@ -25,7 +25,7 @@ exports.create = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
   try {
-    const users = await User.find({parentId: req.params.parentId}, {userName: 1, email: 1, name: 1})
+    const users = await User.find({parentId: req.params.parentId}, {userName: 1, email: 1, name: 1, commission: 1, keyId: 1, secretKey: 1})
     res.send(users)
   } catch (error) {
     next(error)

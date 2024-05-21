@@ -39,6 +39,18 @@ const userSchema = new Schema({
     type: Boolean,
     default: true
   },
+  commission: {
+    type: Number,
+    required: true
+  },
+  keyId: {
+    type: String,
+    required: true
+  },
+  secretKey: {
+    type: String,
+    required: true
+  },
   role: {
     type: String,
     enum: roles
