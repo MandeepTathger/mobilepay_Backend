@@ -19,18 +19,33 @@ const transactionSchema = new Schema({
       validator: validateObjectIdOrString
     }
   },
-  razorpayOrderId: {
-    type: String,
-  },
-  razorpayPaymentId: {
-    type: String,
-  },
-  razorpaySignature: {
-    type: String,
+  // razorpayOrderId: {
+  //   type: String,
+  // },
+  // razorpayPaymentId: {
+  //   type: String,
+  // },
+  // razorpaySignature: {
+  //   type: String,
+  // },
+  receiverName: {
+    type: String
   },
   amount: {
     type: Number,
-  }
+  },
+  payoutId: {
+    type: String
+  },
+  platformFee: {
+    type: Number
+  },
+  fundAccountId: {
+    type: String
+  },
+  type: {
+    type: String
+  },
 }, {
   timestamps: true
 })

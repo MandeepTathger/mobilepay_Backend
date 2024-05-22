@@ -8,6 +8,7 @@ const transactionController = require('../../controllers/transaction.controller'
 router.post('/payment', transactionController.payment)
 router.post('/create', transactionController.create)
 router.get('/getTransactions/:id', transactionController.getTransactions)
+router.get('/getLast5Transactions/:id', transactionController.getLast5Transactions)
 
 // router.post('/payment', (req, res) => {
 //   var options = {
