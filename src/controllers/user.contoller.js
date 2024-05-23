@@ -70,4 +70,79 @@ exports.update = async (req, res, next) => {
   }
 }
 
+exports.getTop5Users = async (req, res, next) => {
+  try {
+    await User.aggregate([
+      {
+        $match: {
+          parentId: mongoose.Types.ObjectId(req.params.id)
+        }
+      },
+      {
+        $lookup: {
+          from: "transactions",
+          let: {
+            id: "$_id",
+            parentId: "$parentId"
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$senderId", "$$id"] },
+                    { $eq: ["$receiverId", "$$parentId"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: "transaction"
+        }
+      },
+      {
+        $unwind: "$transaction"
+      },
+      {
+        $group: {
+          _id: {id: "$_id", userName: "$userName", name: "$name"},
+          totalAmount: { $sum: "$transaction.amount" }
+        }
+      },
+      {
+        $sort: { totalAmount: -1 }
+      },
+      {
+        $limit: 5  
+      },
+      // {
+      //   $lookup: {
+      //     from: "users",
+      //     localField: "_id",
+      //     foreignField: "userId",
+      //     as: "user"
+      //   }
+      // },
+      // {
+      //   $unwind: "$user"
+      // },
+      // {
+      //   $project: {
+      //     _id: 0,
+      //     userId: "$_id",
+      //     username: "$user.username",  // Include other user fields as needed
+      //     totalAmount: 1
+      //   }
+      // }
+    ]).then(response => {
+      console.log(response, "ress")
+      if(response){
+        res.send(response)
+      }
+    })
+  } catch (error) {
+    next(error)
+  }
+}
+
 

@@ -154,6 +154,15 @@ exports.getTransactions = async (req, res, next) => {
   }
 }
 
+exports.getTransactionsCount = async (req, res, next) => {
+  try {
+    const data = await Transaction.find({ $or: [{senderId: mongoose.Types.ObjectId(req.params.id)}, {receiverId: mongoose.Types.ObjectId(req.params.id)}]})
+    res.send({count: data?.length || 0})
+  } catch (error) {
+    next(error)
+  }
+}
+
 exports.getLast5Transactions = async (req, res, next) => {
   try {
     const data = await Transaction.find({ senderId: mongoose.Types.ObjectId(req.params.id)}).sort({ createdAt: -1 }).limit(5)
@@ -162,4 +171,61 @@ exports.getLast5Transactions = async (req, res, next) => {
     next(error)
   }
 }
-  
+
+exports.getSummarySA = async (req, res, next) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const data = {
+      todayAmount: 0,
+      totalAmount: 0,
+      totalUsers: 0
+    }
+    await Transaction.aggregate([
+      {
+        $match: {
+          receiverId: mongoose.Types.ObjectId(req.params.id),
+          createdAt: {
+            $gte: today,
+            $lt: tomorrow
+          }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          todayAmount: { $sum: '$amount' }
+        }
+      }
+    ]).then(res => {
+      data.todayAmount = res[0]?.todayAmount
+    })
+
+    await Transaction.aggregate([
+      {
+        $match: {
+          receiverId: mongoose.Types.ObjectId(req.params.id)
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: '$amount' }
+        }
+      }
+    ]).then(res => {
+      data.totalAmount = res[0]?.totalAmount
+    })
+    
+    const users = await Users.find({parentId: mongoose.Types.ObjectId(req.params.id)})
+
+    data.totalUsers = users?.length
+
+    res.send(data)
+  } catch (error) {
+    next(error)
+  }
+}

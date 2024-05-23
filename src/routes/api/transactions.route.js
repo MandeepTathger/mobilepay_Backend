@@ -3,12 +3,14 @@
 const express = require('express')
 const router = express.Router()
 const transactionController = require('../../controllers/transaction.controller')
-
+const auth = require('../../middlewares/authorization')
 
 router.post('/payment', transactionController.payment)
 router.post('/create', transactionController.create)
 router.get('/getTransactions/:id', transactionController.getTransactions)
-router.get('/getLast5Transactions/:id', transactionController.getLast5Transactions)
+router.get('/getTransactionsCount/:id', transactionController.getTransactionsCount)
+router.get('/getLast5Transactions/:id', auth(['admin']), transactionController.getLast5Transactions)
+router.get('/getSummarySA/:id', auth(['superAdmin']), transactionController.getSummarySA)
 
 // router.post('/payment', (req, res) => {
 //   var options = {

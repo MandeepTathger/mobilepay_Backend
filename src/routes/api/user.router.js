@@ -12,6 +12,7 @@ router.get('/getUser/:id', userController.getUser)
 router.get('/getUsers/:parentId', auth(['superAdmin']), userController.getUsers)
 router.delete('/delete/:id', auth(['superAdmin']), userController.delete)
 router.put('/update/:id', auth(['superAdmin', 'admin']), userController.update)
+router.get('/getTop5Users/:id', auth(['superAdmin']),  userController.getTop5Users)
 
 
 module.exports = router
